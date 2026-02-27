@@ -8,40 +8,13 @@
 #ifndef SRC_ICM20948_H_
 #define SRC_ICM20948_H_
 #include "main.h"
+#include <stdbool.h>
 typedef struct 
 { 
     SPI_HandleTypeDef *hspi;
     GPIO_TypeDef *cs_port;
     uint16_t cs_pin;
 } ICM20948_HandleTypeDef_SPI;
-typedef struct 
-{
-    I2C_HandleTypeDef *hi2c;
-    uint16_t dev_address;
-}ICM20498_HandleTypeDef_I2C;
-#define SPI_READ 0x80
-#define SPI_WRITE 0x00
-typedef enum 
-{
-    ub_0 = 0<<4,
-    ub_1 = 1<<4,
-    ub_2 = 2<<4,
-    ub_3 = 3<<4,
-}userbank_t;
-typedef enum 
-{
-    _250dps,
-    _500dps,
-    _1000dps,
-    _2000dps,
-}gyro_fsr_t;
-typedef enum 
-{
-    _4g,
-    _8g,
-    _16g,
-    _32g,
-}accel_fsr_t;
 
 typedef struct
 {
@@ -49,7 +22,7 @@ typedef struct
 	float y;
 	float z;
 } axises;
-typedef enum 
+typedef enum
 {
     power_down_mode = 0,
     single_measurement_mode = 1,
@@ -58,6 +31,68 @@ typedef enum
     continuous_measurement_50hz = 4,
     continuous_measurement_100hz = 8
 }operation_mode_t;
+typedef enum
+{
+    ub_0 = 0<<4,
+    ub_1 = 1<<4,
+    ub_2 = 2<<4,
+    ub_3 = 3<<4,
+}userbank_t;
+typedef enum
+{
+    _250dps,
+    _500dps,
+    _1000dps,
+    _2000dps,
+}gyro_fsr_t;
+typedef enum
+{
+    _4g,
+    _8g,
+    _16g,
+    _32g,
+}accel_fsr_t;
+#define SPI_READ 0x80
+#define SPI_WRITE 0x00
+//FUNCTION PROTOTYPE
+void ICM20948_Init_Config(ICM20948_HandleTypeDef_SPI *hICM, SPI_HandleTypeDef *hspi, GPIO_TypeDef *cs_port, uint16_t cs_pin);
+void ICM20948_Init(ICM20948_HandleTypeDef_SPI *hICM, SPI_HandleTypeDef *hspi, GPIO_TypeDef *cs_port, uint16_t cs_pin);
+void MagAk09916_Init(ICM20948_HandleTypeDef_SPI *hICM);
+// data raw
+void ICM20948_Read_Gyro(ICM20948_HandleTypeDef_SPI *hICM, axises *gyro_data);
+void ICM20948_Read_Accel(ICM20948_HandleTypeDef_SPI *hICM, axises *accel_data);
+bool MagAk09916_Read_Mag(ICM20948_HandleTypeDef_SPI *hICM, axises *mag_data);
+//  convert 16 bit data
+void ICM20948_Convert_Gyro(ICM20948_HandleTypeDef_SPI *hICM, axises *gyro_data);
+void ICM20948_Convert_Accel(ICM20948_HandleTypeDef_SPI *hICM, axises *accel_data);
+void MagAk09916_Convert_Mag(ICM20948_HandleTypeDef_SPI *hICM, axises *mag_data);
+//  sub function 
+bool ICM20948_Who_Am_I(ICM20948_HandleTypeDef_SPI *hICM);
+bool MagAk09916_Who_Am_I(ICM20948_HandleTypeDef_SPI *hICM);
+void ICM20948_Device_Reset(ICM20948_HandleTypeDef_SPI *hICM);
+void MagAk09916_Device_Reset(ICM20948_HandleTypeDef_SPI *hICM);
+void ICM20948_Wake_Up(ICM20948_HandleTypeDef_SPI *hICM);
+void ICM20948_Sleep(ICM20948_HandleTypeDef_SPI *hICM);
+void ICM20948_Spi_Slave_Enable(ICM20948_HandleTypeDef_SPI *hICM);
+void ICM20948_I2c_Master_Enable(ICM20948_HandleTypeDef_SPI *hICM);
+void ICM20948_I2c_Master_Reset(ICM20948_HandleTypeDef_SPI *hICM);
+void ICM20948_I2C_Master_Clk_Frq(ICM20948_HandleTypeDef_SPI *hICM, uint8_t freq);
+void ICM20948_Clock_Source(ICM20948_HandleTypeDef_SPI *hICM, uint8_t clk_src);
+void ICM20948_Odr_Align_Enable(ICM20948_HandleTypeDef_SPI *hICM);
+void ICM20948_Gyro_Low_Pass_Filter(ICM20948_HandleTypeDef_SPI *hICM, uint8_t lpf);
+void ICM20948_Accel_Low_Pass_Filter(ICM20948_HandleTypeDef_SPI *hICM, uint8_t lpf);
+// output data rate 
+void ICM20948_Gyro_Sample_Rate_Divider(ICM20948_HandleTypeDef_SPI *hICM, uint8_t div);
+void ICM20948_Accel_Sample_Rate_Divider(ICM20948_HandleTypeDef_SPI *hICM, uint16_t div);
+void MagAk09916_Operation_Mode(ICM20948_HandleTypeDef_SPI *hICM, operation_mode_t mode);
+// Calibration
+void ICM20948_Calibrate_Gyro(ICM20948_HandleTypeDef_SPI *hICM );
+void ICM20948_Calibrate_Accel(ICM20948_HandleTypeDef_SPI *hICMs);
+void ICM20948_Gyro_Full_Scale_Select(ICM20948_HandleTypeDef_SPI *hICM, gyro_fsr_t fsr);
+void ICM20948_Accel_Full_Scale_Select(ICM20948_HandleTypeDef_SPI *hICM, accel_fsr_t fsr);   
+// 
+
+
 //USER BANK0
 #define ICM20948_WHO_AM_I 0x00
 #define ICM20948_USER_CTRL 0x03
@@ -168,7 +203,7 @@ typedef enum
 #define ICM20948_I2C_SLV0_ADDR 0x03
 #define ICM20948_I2C_SLV0_REG 0x04
 #define ICM20948_I2C_SLV0_CTRL 0x05
-#define ICM20948_I2C_SLV1_DO 0x06
+#define ICM20948_I2C_SLV0_DO 0x06
 #define ICM20948_I2C_SLV1_ADDR 0x07
 #define ICM20948_I2C_SLV1_REG 0x08
 #define ICM20948_I2C_SLV1_CTRL 0x09
