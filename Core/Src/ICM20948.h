@@ -47,10 +47,10 @@ typedef enum
 }gyro_fsr_t;
 typedef enum
 {
+    _2g,
     _4g,
     _8g,
     _16g,
-    _32g,
 }accel_fsr_t;
 #define SPI_READ 0x80
 #define SPI_WRITE 0x00
@@ -65,7 +65,7 @@ bool MagAk09916_Read_Mag(ICM20948_HandleTypeDef_SPI *hICM, axises *mag_data);
 //  convert 16 bit data
 void ICM20948_Convert_Gyro(ICM20948_HandleTypeDef_SPI *hICM, axises *gyro_data);
 void ICM20948_Convert_Accel(ICM20948_HandleTypeDef_SPI *hICM, axises *accel_data);
-void MagAk09916_Convert_Mag(ICM20948_HandleTypeDef_SPI *hICM, axises *mag_data);
+bool MagAk09916_Convert_Mag(ICM20948_HandleTypeDef_SPI *hICM, axises *mag_data);
 //  sub function 
 bool ICM20948_Who_Am_I(ICM20948_HandleTypeDef_SPI *hICM);
 bool MagAk09916_Who_Am_I(ICM20948_HandleTypeDef_SPI *hICM);
