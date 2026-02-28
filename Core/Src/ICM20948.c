@@ -321,6 +321,7 @@ void ICM20948_Gyro_Full_Scale_Select(ICM20948_HandleTypeDef_SPI *hICM, gyro_fsr_
         gyro_scale_factor = 16.4f;
         new_val |= 0x06; // Set FSR to 2000dps
         break;
+    }
     ICM20948_Write_Register(hICM, ub_2, ICM20948_GYRO_CONFIG_1, new_val);
 }
 void ICM20948_Accel_Full_Scale_Select(ICM20948_HandleTypeDef_SPI *hICM, accel_fsr_t fsr)
